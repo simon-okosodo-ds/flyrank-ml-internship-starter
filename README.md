@@ -32,6 +32,20 @@ The fastest path is Google Colab (one click, zero install). Open Notebook 1 and 
 
 ---
 
+## My Capstone — Diagnosis-First Content Triage
+
+Nested-cross-validated Random Forest lifting content-review Precision@50 from a 0.400
+baseline to **0.892 ± 0.065** on 9.8M real production rows (55 clients, 331,437 content
+items) — confirmed with a bootstrap 95% confidence interval [0.240, 0.600] that excludes
+zero, after catching and correcting a hyperparameter-tuning leak in an earlier validation
+pass.
+
+- **Live API:** https://flyrank-triage-api.onrender.com/docs
+- **Research paper:** https://simon-okosodo-ds.github.io/flyrank-ml-internship-starter/
+- **Capstone notebook:** [`work/notebooks/capstone.ipynb`](work/notebooks/capstone.ipynb)
+
+---
+
 ## Your assignment notebooks — open, fill, save, done
 
 Every assignment is one pre-named skeleton notebook in `work/notebooks/`. Click its badge,
