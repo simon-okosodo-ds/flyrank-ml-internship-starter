@@ -5,6 +5,10 @@
 <title>Diagnosis-First Content Triage — Simon Okosodo, FlyRank ML Internship</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="A nested-cross-validated ranking + diagnosis model for FlyRank content review, built on 9.8M rows of real production search data.">
+<meta name="author" content="Simon Okosodo">
+<meta property="article:author" content="https://www.linkedin.com/in/simon-okosodo-ai/">
+<meta property="article:published_time" content="2026-08-01T09:00:00+01:00">
+<meta property="article:modified_time" content="2026-10-08T09:00:00+01:00">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Diagnosis-First Content Triage — Simon Okosodo, FlyRank ML Internship">
 <meta property="og:description" content="A nested-cross-validated ranking + diagnosis model for FlyRank content review — Precision@50 0.400 → 0.892±0.065 on 9.8M rows of real production search data.">
@@ -14,6 +18,22 @@
 <meta name="twitter:title" content="Diagnosis-First Content Triage — Simon Okosodo, FlyRank ML Internship">
 <meta name="twitter:description" content="A nested-cross-validated ranking + diagnosis model for FlyRank content review — Precision@50 0.400 → 0.892±0.065 on 9.8M rows of real production search data.">
 <meta name="twitter:image" content="https://simon-okosodo-ds.github.io/simon-portfolio/images/bio-photo.jpg">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Diagnosis-First Content Triage: Ranking Which Pages to Review, and Why",
+  "author": {
+    "@type": "Person",
+    "name": "Simon Okosodo",
+    "url": "https://www.linkedin.com/in/simon-okosodo-ai/"
+  },
+  "datePublished": "2026-08-01",
+  "dateModified": "2026-10-08",
+  "image": "https://simon-okosodo-ds.github.io/simon-portfolio/images/bio-photo.jpg",
+  "mainEntityOfPage": "https://simon-okosodo-ds.github.io/flyrank-ml-internship-starter/"
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -112,7 +132,8 @@
   <div class="hero">
     <p class="eyebrow">FlyRank ML Internship — Capstone Research Paper</p>
     <h1>Diagnosis-First Content Triage: Ranking Which Pages to Review, and Why</h1>
-    <p class="byline">Simon Okosodo · Data Science Intern, FlyRank · Aug 2026 ·
+    <p class="byline"><a rel="author" href="https://www.linkedin.com/in/simon-okosodo-ai/">Simon Okosodo</a> · Data Science Intern, FlyRank ·
+      <time datetime="2026-08">Aug 2026</time> · Updated <time datetime="2026-10-08">Oct 2026</time> ·
       <a href="https://simon-okosodo-ds.github.io/simon-portfolio/">Portfolio</a> ·
       <a href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter">Repo</a>
     </p>
@@ -524,9 +545,10 @@ print(f"ML-07 baseline rule: Precision@50 = {baseline_p50:.3f}")
       <tr><td><a class="mono" href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter/blob/main/work/notebooks/w03_feature_leakage_check.ipynb">work/notebooks/w03_feature_leakage_check.ipynb</a></td><td>Feature vector + leakage hunt on the final feature set</td></tr>
       <tr><td><a class="mono" href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter/blob/main/work/notebooks/w04_signal_audit.ipynb">work/notebooks/w04_signal_audit.ipynb</a></td><td>CONFIRMED verdicts on position→CTR and striking-distance→volume signals</td></tr>
       <tr><td><a class="mono" href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter/blob/main/work/notebooks/w04_baseline_score.ipynb">work/notebooks/w04_baseline_score.ipynb</a></td><td>The transparent baseline rule logic and top-10 hand review (starter-dataset context)</td></tr>
-      <tr><td><a class="mono" href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter/blob/main/work/notebooks/w05_model.ipynb">work/notebooks/w05_model.ipynb</a></td><td>Random Forest training; the real warehouse baseline (0.400); 5-fold vs. 10-fold stability; the fold-1 client investigation; the leaked-vs-nested hyperparameter comparison; the final full-data model fit (0.892 ± 0.065) and bootstrap CI [0.240, 0.600]</td></tr>
-      <tr><td><a class="mono" href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter/blob/main/work/notebooks/w06_validation_audit.ipynb">work/notebooks/w06_validation_audit.ipynb</a></td><td>Honest-split re-audit, final leakage re-hunt, claim rewrite</td></tr>
-      <tr><td><a class="mono" href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter/blob/main/work/notebooks/w07_action_playbook.ipynb">work/notebooks/w07_action_playbook.ipynb</a></td><td>Diagnosis layer, ranked queue, no-go list. Note: this notebook's own cost/value cell predates the nested-CV result and still references an earlier baseline figure — pending a sync pass to match the 0.892 ± 0.065 headline used in this paper.</td></tr>
+      <tr><td><a class="mono" href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter/blob/main/work/notebooks/w05_model.ipynb">work/notebooks/w05_model.ipynb</a></td><td>Random Forest training; the real warehouse baseline (0.400); average precision and recall at realistic review capacity; 5-fold grouped stability and the fold-variance client investigation; the rejected 3-feature simplification test; the 40-vs-55 clients reconciliation</td></tr>
+      <tr><td><a class="mono" href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter/blob/main/work/notebooks/w06_validation_audit.ipynb">work/notebooks/w06_validation_audit.ipynb</a></td><td>Honest-split re-audit (1.000 random vs 0.820 grouped); leaky vs. nested-CV hyperparameter tuning (0.904 vs 0.892 ± 0.065); bootstrap 95% CI [0.240, 0.600]; 10-fold sensitivity check; final production model; leakage re-hunt; claim rewrite</td></tr>
+      <tr><td><a class="mono" href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter/blob/main/work/notebooks/w07_action_playbook.ipynb">work/notebooks/w07_action_playbook.ipynb</a></td><td>Diagnosis layer, ranked queue, no-go list, and the cost/value calculation synced to the warehouse baseline (0.400) and the nested-CV figure (0.892), about 25 editor-hours freed per week</td></tr>
+      <tr><td><a class="mono" href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter/blob/main/work/notebooks/capstone.ipynb">work/notebooks/capstone.ipynb</a></td><td>The executable mirror of this paper: the full validation chain end to end, the <span class="mono">has_position_data</span> flag test, the <span class="mono">playbook_metrics.json</span> export every headline number traces to, the demo outline, and the shareable summaries</td></tr>
     </table>
     <p>Data: gated on Hugging Face at <span class="mono">FlyRank/internship-warehouse</span>, build
       <span class="mono">flyrank_pseudonymized_warehouse_release_v20260703</span>. Random seed
