@@ -1,15 +1,24 @@
 {
-  "precision_at_50_grouped": 0.892,
   "precision_at_50_baseline": 0.4,
+  "precision_at_50_single_grouped_split": 0.82,
+  "precision_at_50_random_split_warning": 1.0,
+  "precision_at_50_nested_cv_mean": 0.892,
+  "precision_at_50_nested_cv_std": 0.065,
+  "bootstrap_95ci_model_vs_baseline_gap": [
+    0.24,
+    0.6
+  ],
+  "editor_hours_freed_per_week": 25,
   "diagnosis_distribution": {
     "ctr_fixable": 0.581,
     "stable_or_improving": 0.239,
     "likely_serp_answered": 0.105,
     "genuine_decline": 0.075
   },
-  "rows_with_no_position_data": 303,
-  "rows_likely_serp_answered": 13775,
+  "rows_with_no_position_data_full_queue": 303,
+  "rows_with_no_position_data_test_split": 7141,
   "total_eligible_rows": 130969,
+  "distinct_clients_in_slice": 40,
   "source_month_pair": "Feb 2026 (features) -> Mar 2026 (label)",
   "warehouse_build": "flyrank_pseudonymized_warehouse_release_v20260703"
 }
