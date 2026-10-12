@@ -5,10 +5,6 @@
 <title>Diagnosis-First Content Triage — Simon Okosodo, FlyRank ML Internship</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="A nested-cross-validated ranking + diagnosis model for FlyRank content review, built on 9.8M rows of real production search data.">
-<meta name="author" content="Simon Okosodo">
-<meta property="article:author" content="https://www.linkedin.com/in/simon-okosodo-ai/">
-<meta property="article:published_time" content="2026-08-01T09:00:00+01:00">
-<meta property="article:modified_time" content="2026-10-08T09:00:00+01:00">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Diagnosis-First Content Triage — Simon Okosodo, FlyRank ML Internship">
 <meta property="og:description" content="A nested-cross-validated ranking + diagnosis model for FlyRank content review — Precision@50 0.400 → 0.892±0.065 on 9.8M rows of real production search data.">
@@ -18,22 +14,6 @@
 <meta name="twitter:title" content="Diagnosis-First Content Triage — Simon Okosodo, FlyRank ML Internship">
 <meta name="twitter:description" content="A nested-cross-validated ranking + diagnosis model for FlyRank content review — Precision@50 0.400 → 0.892±0.065 on 9.8M rows of real production search data.">
 <meta name="twitter:image" content="https://simon-okosodo-ds.github.io/simon-portfolio/images/bio-photo.jpg">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": "Diagnosis-First Content Triage: Ranking Which Pages to Review, and Why",
-  "author": {
-    "@type": "Person",
-    "name": "Simon Okosodo",
-    "url": "https://www.linkedin.com/in/simon-okosodo-ai/"
-  },
-  "datePublished": "2026-08-01",
-  "dateModified": "2026-10-08",
-  "image": "https://simon-okosodo-ds.github.io/simon-portfolio/images/bio-photo.jpg",
-  "mainEntityOfPage": "https://simon-okosodo-ds.github.io/flyrank-ml-internship-starter/"
-}
-</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -132,8 +112,7 @@
   <div class="hero">
     <p class="eyebrow">FlyRank ML Internship — Capstone Research Paper</p>
     <h1>Diagnosis-First Content Triage: Ranking Which Pages to Review, and Why</h1>
-    <p class="byline"><a rel="author" href="https://www.linkedin.com/in/simon-okosodo-ai/">Simon Okosodo</a> · Data Science Intern, FlyRank ·
-      <time datetime="2026-08">Aug 2026</time> · Updated <time datetime="2026-10-08">Oct 2026</time> ·
+    <p class="byline">Simon Okosodo · Data Science Intern, FlyRank · Aug 2026 ·
       <a href="https://simon-okosodo-ds.github.io/simon-portfolio/">Portfolio</a> ·
       <a href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter">Repo</a>
     </p>
@@ -174,9 +153,10 @@
     prior-month signals to predict next-month improvement, validated with a client-grouped
     split to prevent memorization. An initial single-split result (Precision@50&nbsp;=&nbsp;0.820)
     was deliberately not trusted as final: 5-fold grouped cross-validation showed it sat within a
-    wide 0.764&nbsp;±&nbsp;0.135 range, and a first hyperparameter-tuning pass was found to leak
-    across validation folds, inflating the score to an unvalidated 0.904. Nested cross-validation
-    — tuning independently inside each fold — produced the honest, reportable result:
+    wide 0.764&nbsp;±&nbsp;0.135 range, and a first hyperparameter-tuning pass reused settings chosen on clients that also
+    appear in later test folds — a leak by construction. Its estimate (0.89–0.90, depending on
+    search settings) was within noise of the final figure, but only nested cross-validation —
+    tuning independently inside each fold — can show that, so it produced the reportable result:
     Precision@50&nbsp;=&nbsp;0.892&nbsp;±&nbsp;0.065, confirmed with a bootstrap 95% confidence
     interval of [0.240, 0.600] on the gap over baseline that excludes zero. This cuts wasted
     editor reviews from roughly 60% to 11% per week — about 25 extra productive reviews out of
@@ -263,13 +243,14 @@
       entirely from February; the label comes entirely from March.
     </p>
     <h3>Features</h3>
-    <p class="mono">impressions, clicks, avg_position, has_position_data, in_striking_distance, has_real_volume</p>
+    <p class="mono">impressions, clicks, avg_position, in_striking_distance, has_real_volume</p>
     <p>
-      All are knowable at the February decision point — no feature crosses into March.
-      <span class="mono">has_position_data</span> was added after error analysis found
-      <span class="mono">avg_position&nbsp;=&nbsp;0</span> (meaning "no position data," per the
-      data dictionary — present in 303 of 130,969 rows) was being silently averaged in as if it
-      were rank zero; the explicit flag resolved this without discarding the rows.
+      All five are knowable at the February decision point — no feature crosses into March.
+      A sixth candidate, a <span class="mono">has_position_data</span> flag for
+      <span class="mono">avg_position&nbsp;=&nbsp;0</span> (meaning "no position data," per the data
+      dictionary — 303 of 130,969 rows), was tested as a side experiment: it tightened fold-to-fold
+      variation (std 0.135&nbsp;→&nbsp;0.119) without changing the mean, and was
+      <strong>not adopted</strong>, so the final model uses the five features above.
     </p>
     <h3>Baseline</h3>
     <p>
@@ -301,16 +282,20 @@
     <p>
       <strong>A hyperparameter search was caught leaking across folds.</strong> An initial tuning
       pass selected one "best" configuration using only the original 28 training clients, then
-      reused those parameters across all 5 outer validation folds. Because some of those 28
-      clients inevitably landed in the test portion of later folds, the resulting 0.904&nbsp;±&nbsp;0.086
-      was a second-order leak — the same class of problem, one level removed, as feeding a
-      model a feature it shouldn't see.
+      reused those parameters across all 5 outer validation folds. Some of those 28 clients
+      inevitably landed in the test portion of later folds, so the settings had indirectly "seen"
+      test data — a second-order leak, the same class of problem as giving a model a feature it
+      shouldn't see. Three differently configured versions of this leaky search (different grids
+      and inner splits, run in separate notebooks) gave 0.89–0.90 (std&nbsp;0.08–0.09); the
+      measured effect of the leak was therefore small and within noise.
     </p>
     <p>
       <strong>Fixed with nested cross-validation.</strong> Hyperparameters were re-selected
       independently inside each outer fold, using only that fold's own training clients. The
-      result barely moved — 0.892&nbsp;±&nbsp;0.065 — confirming the improvement from tuning was
-      real, not an artifact, while also being meaningfully more stable than the untuned model.
+      result, 0.892&nbsp;±&nbsp;0.065, was essentially the same as the leaky estimates — so the
+      leak did not measurably inflate the score here — and nested validation is what allows that
+      to be stated rather than assumed. It was also clearly more stable than the untuned model
+      (std&nbsp;0.065 vs. 0.135).
       A final model was then tuned once more and fit on all 40 eligible clients as the deployed
       artifact; its reported performance is this nested-CV estimate, since no held-out data
       remains once trained on everything.
@@ -372,9 +357,9 @@
         <text x="193" y="196" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10.5" fill="#6E6E68">5-fold mean</text>
         <text x="193" y="208" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9.5" fill="#6E6E68">±0.135 (wide)</text>
         <rect x="248" y="22.4" width="70" height="157.6" fill="#B5651D"/>
-        <text x="283" y="15" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" fill="#B5651D" font-weight="700">0.904</text>
-        <text x="283" y="196" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10.5" fill="#6E6E68">Tuned (leaky)</text>
-        <text x="283" y="208" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9.5" fill="#6E6E68">rejected</text>
+        <text x="283" y="15" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" fill="#B5651D" font-weight="700">≈0.90</text>
+        <text x="283" y="196" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10.5" fill="#6E6E68">Leaky tuning</text>
+        <text x="283" y="208" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9.5" fill="#6E6E68">not used</text>
         <rect x="338" y="27.2" width="70" height="152.8" fill="#2B3EFF"/>
         <text x="373" y="20" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" fill="#2B3EFF" font-weight="700">0.892</text>
         <text x="373" y="196" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10.5" fill="#14161B" font-weight="600">Nested CV</text>
@@ -385,8 +370,8 @@
         <text x="463" y="208" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="9.5" fill="#6E6E68">memorization warning</text>
       </svg>
       <p class="chart-caption">Five numbers, one honest answer. The single-split result (0.820)
-        and a leaked tuning result (0.904) were each rejected on their own evidence before
-        arriving at the final, nested-cross-validated 0.892 ± 0.065 — reported here as the full
+        and a leaky-tuning estimate (≈0.90, varying with search settings) were each set aside
+        on their own evidence before arriving at the final, nested-cross-validated 0.892 ± 0.065 — reported here as the full
         chain, not just the ending, per this project's leakage-hunting discipline.</p>
     </div>
 
@@ -471,17 +456,18 @@ print(f"ML-07 baseline rule: Precision@50 = {baseline_p50:.3f}")
         this was wrong: one small, low-traffic client with an atypically low improvement rate
         (0.264 vs. 0.452 dataset average) was the real cause, not client size — the large client
         in the same fold performed almost exactly at the dataset average (0.456).</li>
-      <li><strong>A first hyperparameter-tuning pass leaked across folds and was rejected.</strong>
+      <li><strong>A first hyperparameter-tuning pass leaked across folds and was replaced.</strong>
         Reusing one "best" configuration (selected using only 28 training clients) across all 5
-        outer validation folds produced an inflated, unvalidated 0.904 ± 0.086. Nested
-        cross-validation — tuning independently inside each fold — gave the honest 0.892 ± 0.065
-        used throughout this paper.</li>
+        outer validation folds is a leak by construction. Three versions of that leaky search gave
+        0.89–0.90 (std 0.08–0.09) depending on grid and inner-split settings — within noise of the
+        nested-cross-validation result (0.892 ± 0.065) — so its measured effect was small, but only
+        the nested design makes the reported figure defensible.</li>
       <li><strong><span class="mono">avg_position = 0</span> bug, found via error review and
-        partially addressed.</strong> Per the data dictionary, 0 means "no position data," not
-        literal rank zero. An explicit <span class="mono">has_position_data</span> flag was added
-        so these 303 rows are no longer silently averaged in as rank zero. This improved model
-        <em>stability</em> (std narrowed from 0.135 to 0.119) but not raw accuracy — reported
-        honestly as a partial, not complete, fix.</li>
+        tested but not adopted.</strong> Per the data dictionary, 0 means "no position data," not
+        literal rank zero. An explicit <span class="mono">has_position_data</span> flag was tested
+        as a side experiment: it improved stability (5-fold std 0.135&nbsp;→&nbsp;0.119) but not the
+        mean, and was left out of the final model. These 303 rows therefore remain a named
+        limitation, covered by the human-review rule in the playbook below.</li>
       <li><strong>A simplified 3-feature model was tested and rejected.</strong> Dropping two
         engineered flags won on a single split (0.860) but underperformed the full feature set
         once properly validated across 5 folds (0.724 ± 0.137 vs. 0.764 ± 0.135) — a reminder
@@ -545,10 +531,10 @@ print(f"ML-07 baseline rule: Precision@50 = {baseline_p50:.3f}")
       <tr><td><a class="mono" href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter/blob/main/work/notebooks/w03_feature_leakage_check.ipynb">work/notebooks/w03_feature_leakage_check.ipynb</a></td><td>Feature vector + leakage hunt on the final feature set</td></tr>
       <tr><td><a class="mono" href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter/blob/main/work/notebooks/w04_signal_audit.ipynb">work/notebooks/w04_signal_audit.ipynb</a></td><td>CONFIRMED verdicts on position→CTR and striking-distance→volume signals</td></tr>
       <tr><td><a class="mono" href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter/blob/main/work/notebooks/w04_baseline_score.ipynb">work/notebooks/w04_baseline_score.ipynb</a></td><td>The transparent baseline rule logic and top-10 hand review (starter-dataset context)</td></tr>
-      <tr><td><a class="mono" href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter/blob/main/work/notebooks/w05_model.ipynb">work/notebooks/w05_model.ipynb</a></td><td>Random Forest training; the real warehouse baseline (0.400); average precision and recall at realistic review capacity; 5-fold grouped stability and the fold-variance client investigation; the rejected 3-feature simplification test; the 40-vs-55 clients reconciliation</td></tr>
-      <tr><td><a class="mono" href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter/blob/main/work/notebooks/w06_validation_audit.ipynb">work/notebooks/w06_validation_audit.ipynb</a></td><td>Honest-split re-audit (1.000 random vs 0.820 grouped); leaky vs. nested-CV hyperparameter tuning (0.904 vs 0.892 ± 0.065); bootstrap 95% CI [0.240, 0.600]; 10-fold sensitivity check; final production model; leakage re-hunt; claim rewrite</td></tr>
-      <tr><td><a class="mono" href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter/blob/main/work/notebooks/w07_action_playbook.ipynb">work/notebooks/w07_action_playbook.ipynb</a></td><td>Diagnosis layer, ranked queue, no-go list, and the cost/value calculation synced to the warehouse baseline (0.400) and the nested-CV figure (0.892), about 25 editor-hours freed per week</td></tr>
-      <tr><td><a class="mono" href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter/blob/main/work/notebooks/capstone.ipynb">work/notebooks/capstone.ipynb</a></td><td>The executable mirror of this paper: the full validation chain end to end, the <span class="mono">has_position_data</span> flag test, the <span class="mono">playbook_metrics.json</span> export every headline number traces to, the demo outline, and the shareable summaries</td></tr>
+      <tr><td><a class="mono" href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter/blob/main/work/notebooks/w05_model.ipynb">work/notebooks/w05_model.ipynb</a></td><td>Random Forest training; the real warehouse baseline (0.400); 5-fold vs. 10-fold stability; the fold-1 client investigation; the leaked-vs-nested hyperparameter comparison; the final full-data model fit (0.892 ± 0.065) and bootstrap CI [0.240, 0.600]</td></tr>
+      <tr><td><a class="mono" href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter/blob/main/work/notebooks/w06_validation_audit.ipynb">work/notebooks/w06_validation_audit.ipynb</a></td><td>Honest-split re-audit, final leakage re-hunt, claim rewrite</td></tr>
+      <tr><td><a class="mono" href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter/blob/main/work/notebooks/w07_action_playbook.ipynb">work/notebooks/w07_action_playbook.ipynb</a></td><td>Diagnosis layer, ranked queue, no-go list; cost/value uses the warehouse baseline (0.400) and the nested-CV estimate (0.892), giving 25 editor-hours/week; exports <span class="mono">action_playbook_metrics.json</span>.</td></tr>
+    <tr><td><a class="mono" href="https://github.com/simon-okosodo-ds/flyrank-ml-internship-starter/blob/main/work/notebooks/capstone.ipynb">work/notebooks/capstone.ipynb</a></td><td>The executable mirror of this paper: every headline number (0.400 baseline, 0.892 ± 0.065 nested CV, bootstrap CI [0.240, 0.600]) and the exported <span class="mono">playbook_metrics.json</span></td></tr>
     </table>
     <p>Data: gated on Hugging Face at <span class="mono">FlyRank/internship-warehouse</span>, build
       <span class="mono">flyrank_pseudonymized_warehouse_release_v20260703</span>. Random seed
